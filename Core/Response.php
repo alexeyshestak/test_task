@@ -15,12 +15,13 @@ class Response
     {
 
         $type = $type ?? $_GET['output'] ?? null;
-        $output = $type ?? 'print';
+        $output = $type ?? 'html';
 
         switch ($output) {
             case 'echo':
             case 'print':
             case 'json':
+            case 'html':
                 self::{$output}($response);
                 break;
             default:
@@ -59,6 +60,45 @@ class Response
         echo '<pre>';
         print_r($response);
         echo '</pre>';
+    }
+
+    /**
+     * Prints data
+     *
+     * @param mixed         $response
+     */
+    private static function html($response)
+    {
+        foreach ($response as $item) {
+            switch (true) {
+                case is_string($item):
+                    echo $item;
+                    break;
+                case is_array($item):
+                    echo '<table>';
+                    $isFirst = true;
+                    foreach ($item as $row) {
+                        if ($isFirst) {
+                            $isFirst = false;
+                            echo '<tr>';
+                            foreach ($row as $key => $value) {
+                                echo '<th>' . $key . '</th>';
+                            }
+                            echo '</tr>';
+                        }
+                        echo '<tr>';
+                        foreach ($row as $key => $value) {
+                            echo '<td>' . $value . '</td>';
+                        }
+                        echo '</tr>';
+                    }
+                    echo '</table>';
+                    break;
+                default:
+                    self::print($item);
+                    break;
+            }
+        }
     }
 
 }

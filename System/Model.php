@@ -51,7 +51,7 @@ class Model
         $query->execute();
 
         if ($query->rowCount()) {
-            $result = $query->fetchAll();
+            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
         }
 
         return $result;
@@ -108,7 +108,7 @@ class Model
         $query->execute();
 
         if ($query->rowCount()) {
-            $result = $query->fetchAll();
+            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
         }
 
         return $result;
