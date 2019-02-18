@@ -2,6 +2,8 @@
 
 namespace Classes;
 
+use \Exception;
+
 class Storage
 {
 
@@ -29,11 +31,12 @@ class Storage
             }
 
             fclose($fileRead);
+            fclose($fileWrite);
         } else {
             throw new Exception('Can\'t open file');
         }
 
-        return $fileWrite;
+        return fopen(self::STORAGE_PATH . self::FILE_NAME, 'r');
     }
 
 }

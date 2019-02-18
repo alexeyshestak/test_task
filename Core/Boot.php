@@ -12,6 +12,14 @@ foreach (glob('Classes/*.php') as $filename) {
     include $filename;
 }
 
+foreach (glob('App/DTO/*.php') as $filename) {
+    include $filename;
+}
+
 foreach (glob('App/Models/*.php') as $filename) {
+    include $filename;
+}
+
+foreach (glob('App/Services/*.php') as $filename) {
     include $filename;
 }

@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use App\DTO\ReportFields;
 use App\Models\Transaction;
+use App\Services\FileService;
 use Classes\Storage;
 use Core\Response;
 
@@ -14,17 +16,38 @@ class HomeController
      */
     public static function index()
     {
-        $model = new Transaction();
-
         // TODO: implement services to get a csv-file, validate and import
 
         $fileLink = './Resources/Files/report.csv';
 
-        $file = Storage::getFile($fileLink);
+        $requiredFields = [
+            ReportFields::TRANSACTION_DATE        => 'Transaction Date',
+            ReportFields::TRANSACTION_TYPE        => 'Transaction Type',
+            ReportFields::TRANSACTION_CARD_TYPE   => 'Transaction Card Type',
+            ReportFields::TRANSACTION_CARD_NUMBER => 'Transaction Card Number',
+            ReportFields::TRANSACTOIN_AMOUNT      => 'Transaction Amount',
+            ReportFields::BATCH_DATE              => 'Batch Date',
+            ReportFields::BATCH_REF_NUM           => 'Batch Reference Number',
+            ReportFields::MERCHANT_ID             => 'Merchant ID',
+            ReportFields::MERCHANT_NAME           => 'Merchant Name',
+        ];
 
-        var_dump($file);
-        fclose($file);
+        $fileService = new FileService($fileLink);
 
+        if ($fileService->validate($requiredFields)) {
+            $fieldsMapping = $fileService->getColumnMapping($requiredFields);
+
+            $response = $fileService->getRow($fieldsMapping);
+        }
+
+        /*var_dump($response->getMerchantFields());
+        var_dump($response->getBatchFields());
+        var_dump($response->getTransactionTypeFields());
+        var_dump($response->getCardTypeFields());
+        var_dump($response->getTransactionFields());*/
+
+
+        //$model = new Transaction();
         //$response = $model->getAll();
         /*$response = $model->getOrCreate([
             'merchant_id'  => '1',
