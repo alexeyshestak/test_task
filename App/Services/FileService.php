@@ -10,16 +10,44 @@ class FileService
 {
 
     /** @var mixed $file */
-    private $file;
+    protected $file;
+
+    /** @var array $fieldsMapping */
+    protected $fieldsMapping;
 
     /**
      * Model constructor
      *
      * @param string    $url    File url
+     * @param array     $fields     Array of required fields
      */
-    public function __construct(string $url)
+    public function __construct(
+        string $url,
+        array $fields
+    ) {
+        $this->processFile($url, $fields);
+    }
+
+    /**
+     * Process file
+     *
+     * @param string    $url        File url
+     * @param array     $fields     Array of required fields
+     *
+     * @return void
+     */
+    protected function processFile(
+        string $url,
+        array $fields
+    ): void
     {
         $this->file = $this->getFile($url);
+
+        if ($this->validate($fields)) {
+            $this->fieldsMapping = $this->setColumnMapping($fields);
+        } else {
+            throw new Exception('File is not valid. Some fields are missing.');
+        }
     }
 
     /**
@@ -29,7 +57,7 @@ class FileService
      *
      * @return mixed
      */
-    private function getFile(string $url)
+    protected function getFile(string $url)
     {
 
         return Storage::getFile($url);
@@ -42,7 +70,7 @@ class FileService
      *
      * @return bool
      */
-    public function validate(array $fields): bool
+    protected function validate(array $fields): bool
     {
         $result = false;
 
@@ -57,13 +85,13 @@ class FileService
     }
 
     /**
-     * Gets columns' mapping by file
+     * Sets columns' mapping by file
      *
      * @param array     $fields     Array of required fields
      *
      * @return array
      */
-    public function getColumnMapping(array $fields): array
+    protected function setColumnMapping(array $fields): array
     {
         $result = [];
 
@@ -81,16 +109,14 @@ class FileService
     /**
      * Gets row from file
      *
-     * @param array     $mappingRules   Array of rules for mapping fields
-     *
      * @return ReportFields
      */
-    public function getRow(array $mappingRules): ReportFields
+    public function getRow(): ReportFields
     {
         $result = new ReportFields();
 
         if ($row = fgetcsv($this->file)) {
-            foreach ($mappingRules as $column => $field) {
+            foreach ($this->fieldsMapping as $column => $field) {
                 $result->$column = $row[$field];
             }
         }

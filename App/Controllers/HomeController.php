@@ -11,40 +11,39 @@ use Core\Response;
 class HomeController
 {
 
+    /** @var string $fileLink */
+    private $fileLink = './Resources/Files/report.csv';
+
+    /** @var array $mapping */
+    private $mapping = [
+        ReportFields::TRANSACTION_DATE        => 'Transaction Date',
+        ReportFields::TRANSACTION_TYPE        => 'Transaction Type',
+        ReportFields::TRANSACTION_CARD_TYPE   => 'Transaction Card Type',
+        ReportFields::TRANSACTION_CARD_NUMBER => 'Transaction Card Number',
+        ReportFields::TRANSACTOIN_AMOUNT      => 'Transaction Amount',
+        ReportFields::BATCH_DATE              => 'Batch Date',
+        ReportFields::BATCH_REF_NUM           => 'Batch Reference Number',
+        ReportFields::MERCHANT_ID             => 'Merchant ID',
+        ReportFields::MERCHANT_NAME           => 'Merchant Name',
+    ];
+
     /**
      * Returns text
      */
-    public static function index()
+    public function index()
     {
         // TODO: implement services to get a csv-file, validate and import
 
-        $fileLink = './Resources/Files/report.csv';
+        $fileService = new FileService($this->fileLink, $this->mapping);
 
-        $requiredFields = [
-            ReportFields::TRANSACTION_DATE        => 'Transaction Date',
-            ReportFields::TRANSACTION_TYPE        => 'Transaction Type',
-            ReportFields::TRANSACTION_CARD_TYPE   => 'Transaction Card Type',
-            ReportFields::TRANSACTION_CARD_NUMBER => 'Transaction Card Number',
-            ReportFields::TRANSACTOIN_AMOUNT      => 'Transaction Amount',
-            ReportFields::BATCH_DATE              => 'Batch Date',
-            ReportFields::BATCH_REF_NUM           => 'Batch Reference Number',
-            ReportFields::MERCHANT_ID             => 'Merchant ID',
-            ReportFields::MERCHANT_NAME           => 'Merchant Name',
-        ];
-
-        $fileService = new FileService($fileLink);
-
-        if ($fileService->validate($requiredFields)) {
-            $fieldsMapping = $fileService->getColumnMapping($requiredFields);
-
-            $response = $fileService->getRow($fieldsMapping);
+        while ($response = $fileService->getRow()) {
+            var_dump('----------------------------');
+            var_dump($response->getMerchantFields());
+            var_dump($response->getBatchFields());
+            var_dump($response->getTransactionTypeFields());
+            var_dump($response->getCardTypeFields());
+            var_dump($response->getTransactionFields());
         }
-
-        /*var_dump($response->getMerchantFields());
-        var_dump($response->getBatchFields());
-        var_dump($response->getTransactionTypeFields());
-        var_dump($response->getCardTypeFields());
-        var_dump($response->getTransactionFields());*/
 
 
         //$model = new Transaction();
