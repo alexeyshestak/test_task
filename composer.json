@@ -1,0 +1,9 @@
+{
+    "autoload": {
+        "files": [
+            "Core/Response.php",
+            "Core/Router.php",
+            "Core/Boot.php"
+        ]
+    }
+}
