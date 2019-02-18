@@ -118,4 +118,30 @@ class ReportFields
         return $result;
     }
 
+    /**
+     * Get batch date
+     *
+     * @return string|null
+     */
+    public function getBatchDate(): ?string
+    {
+
+        return property_exists($this, self::BATCH_DATE) ?
+            $this->{self::BATCH_DATE} :
+            null;
+    }
+
+    /**
+     * Get batch number
+     *
+     * @return string|null
+     */
+    public function getBatchNumber(): ?string
+    {
+
+        return property_exists($this, self::BATCH_REF_NUM) ?
+            $this->{self::BATCH_REF_NUM} :
+            null;
+    }
+
 }

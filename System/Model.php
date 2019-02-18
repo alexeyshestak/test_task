@@ -181,6 +181,8 @@ class Model
             $result = $this->find($data, 0, 1);
         }
 
+        $result = $result[0] ?? $result;
+
         return $result;
     }
 

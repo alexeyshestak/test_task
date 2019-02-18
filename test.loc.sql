@@ -3,15 +3,15 @@ CREATE DATABASE IF NOT EXISTS `test.loc` DEFAULT CHARACTER SET utf8mb4 COLLATE u
 USE `test.loc`;
 
 CREATE TABLE `merchant` (
-  `mid` int(18) NOT NULL,
+  `mid` decimal(18,0) NOT NULL,
   `dba` varchar(100) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`mid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `batch` (
-  `bid` int(10) NOT NULL,
+  `bid` int(10) NOT NULL AUTO_INCREMENT,
   `batch_date` date NOT NULL,
-  `batch_ref_num` int(24) NOT NULL,
+  `batch_ref_num` decimal(24,0) NOT NULL,
   PRIMARY KEY (`bid`),
   UNIQUE KEY `batch_index` (`batch_date`,`batch_ref_num`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -32,7 +32,7 @@ CREATE TABLE `transaction_type` (
 
 CREATE TABLE `transaction` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `merchant_id` int(18) NOT NULL,
+  `merchant_id` decimal(18,0) NOT NULL,
   `batch_id` int(10) NOT NULL,
   `date` date NOT NULL,
   `type_id` int(10) NOT NULL,

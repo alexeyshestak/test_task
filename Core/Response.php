@@ -14,7 +14,7 @@ class Response
     public static function render($response, $type = null)
     {
 
-        $type = $type ?? $_GET['output'];
+        $type = $type ?? $_GET['output'] ?? null;
         $output = $type ?? 'print';
 
         switch ($output) {

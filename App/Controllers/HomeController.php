@@ -3,15 +3,22 @@
 namespace App\Controllers;
 
 use App\DTO\ReportFields;
+use App\Models\Batch;
+use App\Models\CardType;
+use App\Models\Merchant;
 use App\Models\Transaction;
+use App\Models\TransactionType;
 use App\Services\FileService;
-use Classes\Storage;
+use App\Services\ImportService;
 use Core\Response;
+use \Exception;
 
 class HomeController
 {
 
     /** @var string $fileLink */
+    //private $fileLink = './Resources/Files/error_report.csv';
+    //private $fileLink = './Resources/Files/1report.csv';
     private $fileLink = './Resources/Files/report.csv';
 
     /** @var array $mapping */
@@ -32,31 +39,25 @@ class HomeController
      */
     public function index()
     {
-        // TODO: implement services to get a csv-file, validate and import
+        $response = 'File has been imported';
 
-        $fileService = new FileService($this->fileLink, $this->mapping);
+        try {
+            $fileService = new FileService($this->fileLink, $this->mapping);
 
-        while ($response = $fileService->getRow()) {
-            var_dump('----------------------------');
-            var_dump($response->getMerchantFields());
-            var_dump($response->getBatchFields());
-            var_dump($response->getTransactionTypeFields());
-            var_dump($response->getCardTypeFields());
-            var_dump($response->getTransactionFields());
+            $importService = new ImportService(
+                $fileService,
+                new Batch(),
+                new CardType(),
+                new Merchant(),
+                new Transaction(),
+                new TransactionType()
+            );
+
+            $importService->import();
+
+        } catch (Exception $ex) {
+            Response::render($ex->getMessage());
         }
-
-
-        //$model = new Transaction();
-        //$response = $model->getAll();
-        /*$response = $model->getOrCreate([
-            'merchant_id'  => '1',
-            'batch_id'     => '1',
-            'date'         => '2019-02-19',
-            'type_id'      => '1',
-            'card_type_id' => '1',
-            'card_num'     => '2',
-            'amount'       => '2',
-        ]);*/
 
         Response::render($response);
     }

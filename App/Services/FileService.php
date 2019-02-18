@@ -109,13 +109,14 @@ class FileService
     /**
      * Gets row from file
      *
-     * @return ReportFields
+     * @return ReportFields|null
      */
-    public function getRow(): ReportFields
+    public function getRow(): ?ReportFields
     {
-        $result = new ReportFields();
+        $result = null;
 
         if ($row = fgetcsv($this->file)) {
+            $result = new ReportFields();
             foreach ($this->fieldsMapping as $column => $field) {
                 $result->$column = $row[$field];
             }
