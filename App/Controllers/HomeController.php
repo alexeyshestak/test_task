@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Transaction;
+use Classes\Storage;
 use Core\Response;
 
 class HomeController
@@ -16,6 +17,13 @@ class HomeController
         $model = new Transaction();
 
         // TODO: implement services to get a csv-file, validate and import
+
+        $fileLink = './Resources/Files/report.csv';
+
+        $file = Storage::getFile($fileLink);
+
+        var_dump($file);
+        fclose($file);
 
         //$response = $model->getAll();
         /*$response = $model->getOrCreate([

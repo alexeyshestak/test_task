@@ -5,51 +5,35 @@ namespace Classes;
 class Storage
 {
 
-    /** @var PDO Instance */
-    protected static $instance;
+    const FILE_NAME = 'report.csv';
+
+    const STORAGE_PATH = './Resources/Storage/';
 
     /**
-     * Get DB instance
+     * Downloads file and returns a file pointer resource
      *
-     * @return PDO
+     * @param string    $url    File url
+     *
+     * @return mixed
      */
-    public static function getInstance()
+    public static function getFile(string $url)
     {
-        if (empty(self::$instance)) {
+        set_time_limit(0);
 
-            $dbConfig = config('db');
+        $fileWrite = fopen(self::STORAGE_PATH . self::FILE_NAME, 'w+');
 
-            try {
-                self::$instance = new PDO(
-                    'mysql:host=' . $dbConfig['host'] . ';port=' . $dbConfig['port'] . ';dbname=' . $dbConfig['db'],
-                    $dbConfig['user'],
-                    $dbConfig['pass']
-                );
-
-                self::$instance
-                    ->setAttribute(
-                        PDO::ATTR_ERRMODE,
-                        PDO::ERRMODE_SILENT
-                    );
-
-                self::$instance
-                    ->query('SET NAMES utf8');
-
-                self::$instance
-                    ->query('SET character_set_connection=utf8');
-
-                self::$instance
-                    ->query('SET character_set_client=utf8');
-
-                self::$instance
-                    ->query('SET character_set_results=utf8');
-
-            } catch(PDOException $error) {
-                echo $error->getMessage();
+        $fileRead = fopen($url, 'r');
+        if ($fileRead) {
+            while (($line = fgets($fileRead)) !== false) {
+                fwrite($fileWrite, $line);
             }
+
+            fclose($fileRead);
+        } else {
+            throw new Exception('Can\'t open file');
         }
 
-        return self::$instance;
+        return $fileWrite;
     }
 
 }
