@@ -93,8 +93,8 @@ class ImportService
                     ->getRow();
 
                 if ($newRow) {
-                    $isSameBatch = $newRow->getBatchDate() === $row->getBatchDate() &&
-                        $newRow->getBatchNumber() === $row->getBatchNumber();
+                    $isSameBatch = $newRow->getBatchDate() == $row->getBatchDate() &&
+                        $newRow->getBatchNumber() == $row->getBatchNumber();
                 }
 
             } while ($newRow && $isSameBatch);
