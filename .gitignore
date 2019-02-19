@@ -1,2 +1,4 @@
 /.idea
 /vendor
+/Resources/Files/*
+/Resources/Storage/*
