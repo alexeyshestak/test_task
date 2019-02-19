@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\InsertionData;
 use App\DTO\ReportFields;
 use App\Models\Batch;
 use App\Models\CardType;
@@ -71,11 +72,11 @@ class ImportService implements ImportServiceInterface
     /**
      * Gets rows from to import (by batch)
      *
-     * @return array
+     * @return InsertionData
      */
-    private function getRows(): array
+    private function getRows(): InsertionData
     {
-        $data = [];
+        $data = new InsertionData();
 
         /** @var ReportFields $newRow */
         $newRow = $this->bufferRow ?? $this->fileService->getRow();
@@ -84,32 +85,13 @@ class ImportService implements ImportServiceInterface
             do {
                 $row = $newRow;
 
-                // we can create structure for $data's item
-                // something like that:
-                // [
-                //      'batch' => [... batch info ...],
-                //      'merchants' => [
-                //          [...],
-                //          [
-                //              'merchant' => [... merchant info ...],
-                //              'transactions' => [... list of transactions ...],
-                //          ],
-                //          [...],
-                //      ],
-                // ]
-                // it helps to implement multi-insertion
-                // (insert into <table> (...) values (...), (...), ...;)
-                //
-                // BUT! import functionality will be not idempotent.
-                // if file will be imported twice, system creates transactions' records twice.
-                //
-                // current implementation avoids that behaviour:
-                // to create transaction record system uses `getOrCreate` method
-                //
-                // we can implement `getOrCreate` method for multi-insertion,
-                // but it will works line by line,
-                // so, there is no advantages for performance will be reached
-                $data[] = $row;
+                $data->setBatchFields($row->getBatchFields())
+                    ->addTransaction(
+                        $row->getMerchantFields(),
+                        $row->getCardTypeFields(),
+                        $row->getTransactionTypeFields(),
+                        $row->getTransactionFields()
+                    );
 
                 $isSameBatch = false;
                 $newRow = $this->fileService
@@ -131,47 +113,59 @@ class ImportService implements ImportServiceInterface
     /**
      * Inserts rows
      *
-     * @param array     $data   Array of ReportFields items
+     * @param InsertionData     $data   Structure of insertion items
      */
-    private function insertRows(array $data)
+    private function insertRows(InsertionData $data)
     {
         try {
             DB::beginTransaction();
 
-            /** @var ReportFields $row */
-            foreach ($data as $row) {
-                $batch = $this->batch
-                    ->getOrCreate(
-                        $row->getBatchFields()
-                    );
+            $toInsert = [];
 
+            $batch = $this->batch
+                ->getOrCreate(
+                    $data->getBatchFields()
+                );
+
+            $merchants = $data->getTransactions();
+            foreach ($merchants as $item) {
                 $merchant = $this->merchant
                     ->getOrCreate(
-                        $row->getMerchantFields()
+                        $item[InsertionData::MERCHANT]
                     );
 
-                $cardType = $this->cardType
-                    ->getOrCreate(
-                        $row->getCardTypeFields()
-                    );
+                $transactions = $item[InsertionData::TRANSACTIONS];
+                foreach ($transactions as $transaction) {
+                    $cardType = $this->cardType
+                        ->getOrCreate(
+                            $transaction[InsertionData::CARD_TYPE]
+                        );
 
-                $transactionType = $this->transactionType
-                    ->getOrCreate(
-                        $row->getTransactionTypeFields()
-                    );
+                    $transactionType = $this->transactionType
+                        ->getOrCreate(
+                            $transaction[InsertionData::TYPE]
+                        );
 
-                $transactionData = $row->getTransactionFields();
-                $transactionData[Transaction::MERCHANT_ID]  = $merchant['mid'];
-                $transactionData[Transaction::BATCH_ID]     = $batch['bid'];
-                $transactionData[Transaction::CARD_TYPE_ID] = $cardType['id'];
-                $transactionData[Transaction::TYPE_ID]      = $transactionType['id'];
+                    $transactionData = $transaction[InsertionData::TRANSACTION];
+                    $transactionData[Transaction::MERCHANT_ID]  = $merchant['mid'];
+                    $transactionData[Transaction::BATCH_ID]     = $batch['bid'];
+                    $transactionData[Transaction::CARD_TYPE_ID] = $cardType['id'];
+                    $transactionData[Transaction::TYPE_ID]      = $transactionType['id'];
 
-                $transaction = $this->transaction
-                    ->getOrCreate(
-                        $transactionData
-                    );
+                    $transaction = $this->transaction
+                        ->getFirst(
+                            $transactionData
+                        );
+
+                    if (empty($transaction)) {
+                        $toInsert[] = $transactionData;
+                    }
+                }
 
             }
+
+            $this->transaction
+                ->groupInsert($toInsert);
 
             DB::commit();
         } catch (Exception $ex) {

@@ -27,5 +27,46 @@ class Transaction extends Model
         parent::__construct();
     }
 
+    /**
+     * Creates records by provided associated array of columns and values
+     *
+     * @param array     $data   Array of data
+     *
+     * @return bool
+     */
+    public function groupInsert(
+        array $data
+    ): bool
+    {
+        $result = false;
+
+        if (!$this->tableName) {
+            return $result;
+        }
+
+        if (count($data) >= 1) {
+            $keys = array_keys($data[0]);
+            $columns = '`' . implode('`, `', $keys) . '`';
+            $values = '';
+
+            $isFirst = true;
+            foreach ($data as $item) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    $values .= ', ';
+                }
+
+                $values .= '(' . join(', ', array_values($item)) . ')';
+            }
+
+            $statement = "INSERT INTO `$this->tableName` ($columns) VALUES ($values)";
+
+            $query = DB::prepare($statement);
+            $result = $query->execute();
+        }
+
+        return $result;
+    }
 
 }
