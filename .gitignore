@@ -1,4 +1,4 @@
 /.idea
 /vendor
-/Resources/Files/*
-/Resources/Storage/*
+/Resources/Files/*.csv
+/Resources/Storage/*.csv
