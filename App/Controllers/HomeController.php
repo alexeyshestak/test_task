@@ -48,7 +48,7 @@ class HomeController
             $importService->import();
 
         } catch (Exception $ex) {
-            Response::render($ex->getMessage());
+            Response::render([$ex->getMessage(), ]);
         }
 
         Response::render($response);

@@ -72,16 +72,18 @@ class ImportService implements ImportServiceInterface
     /**
      * Gets rows from to import (by batch)
      *
-     * @return InsertionData
+     * @return InsertionData|null
      */
-    private function getRows(): InsertionData
+    private function getRows(): ?InsertionData
     {
-        $data = new InsertionData();
+        $data = null;
 
         /** @var ReportFields $newRow */
         $newRow = $this->bufferRow ?? $this->fileService->getRow();
 
         if ($newRow) {
+            $data = new InsertionData();
+
             do {
                 $row = $newRow;
 

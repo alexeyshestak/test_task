@@ -74,29 +74,29 @@ class InsertionData
         array $transaction
     ): InsertionData
     {
-        $findItem = null;
-
-        foreach ($this->merchants as $item) {
-            if ($item[self::MERCHANT][ReportFields::MERCHANT_ID] == $merchant[ReportFields::MERCHANT_ID]) {
-                $findItem = $item;
-            }
-        }
-
         $transactionData = [
             self::TYPE        => $transactionType,
             self::CARD_TYPE   => $cardType,
             self::TRANSACTION => $transaction,
         ];
 
-        if (!$findItem) {
+        $isNotFound = true;
+
+        foreach ($this->merchants as $key => $item) {
+            if ($item[self::MERCHANT][ReportFields::MERCHANT_ID] == $merchant[ReportFields::MERCHANT_ID]) {
+                $item[self::TRANSACTIONS][] = $transactionData;
+                $this->merchants[$key] = $item;
+                $isNotFound = false;
+            }
+        }
+
+        if ($isNotFound) {
             $findItem = [
                 self::MERCHANT     => $merchant,
                 self::TRANSACTIONS => [$transactionData, ],
             ];
 
             $this->merchants[] = $findItem;
-        } else {
-            $findItem[self::TRANSACTIONS][] = $transactionData;
         }
 
         return $this;

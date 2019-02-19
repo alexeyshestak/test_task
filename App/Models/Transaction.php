@@ -57,10 +57,10 @@ class Transaction extends Model
                     $values .= ', ';
                 }
 
-                $values .= '(' . join(', ', array_values($item)) . ')';
+                $values .= '(\'' . implode('\', \'', array_values($item)) . '\')';
             }
 
-            $statement = "INSERT INTO `$this->tableName` ($columns) VALUES ($values)";
+            $statement = "INSERT INTO `$this->tableName` ($columns) VALUES $values";
 
             $query = DB::prepare($statement);
             $result = $query->execute();
