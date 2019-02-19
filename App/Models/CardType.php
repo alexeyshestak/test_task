@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Classes\DB;
 use System\Model;
 
 class CardType extends Model

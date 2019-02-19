@@ -3,6 +3,7 @@
 namespace System;
 
 use Classes\DB;
+use \PDO;
 
 class Model
 {
@@ -16,6 +17,27 @@ class Model
     public function __construct()
     {
 
+    }
+
+    /**
+     * Execute raw SQL query
+     *
+     * @param string    $statement      Query statement
+     *
+     * @return array
+     */
+    public function query(string $statement): array
+    {
+        $result = [];
+
+        $query = DB::prepare($statement);
+        $query->execute();
+
+        if ($query->rowCount()) {
+            $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $result;
     }
 
     /**
@@ -51,7 +73,7 @@ class Model
         $query->execute();
 
         if ($query->rowCount()) {
-            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $query->fetchAll(PDO::FETCH_ASSOC);
         }
 
         return $result;
@@ -108,7 +130,7 @@ class Model
         $query->execute();
 
         if ($query->rowCount()) {
-            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $query->fetchAll(PDO::FETCH_ASSOC);
         }
 
         return $result;

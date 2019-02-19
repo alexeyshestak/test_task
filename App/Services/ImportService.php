@@ -116,8 +116,7 @@ class ImportService implements ImportServiceInterface
                     ->getRow();
 
                 if ($newRow) {
-                    $isSameBatch = $newRow->getBatchDate() == $row->getBatchDate() &&
-                        $newRow->getBatchNumber() == $row->getBatchNumber();
+                    $isSameBatch = $this->checkRows($row, $newRow);
                 }
 
             } while ($newRow && $isSameBatch);
@@ -179,6 +178,23 @@ class ImportService implements ImportServiceInterface
 
             throw new Exception($ex->getMessage());
         }
+    }
+
+    /**
+     * Check rows
+     *
+     * @param ReportFields  $row        Row to compare
+     * @param ReportFields  $newRow     Row to compare
+     *
+     * @return bool
+     */
+    private function checkRows(
+        ReportFields $row,
+        ReportFields $newRow
+    ): bool
+    {
+        return $newRow->getBatchDate() == $row->getBatchDate() &&
+            $newRow->getBatchNumber() == $row->getBatchNumber();
     }
 
 }

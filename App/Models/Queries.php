@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Classes\DB;
 use System\Model;
-use \PDO;
 
 class Queries extends Model
 {
@@ -32,8 +30,6 @@ class Queries extends Model
         string $merchantID
     ): array
     {
-        $result = [];
-
         $statement = sprintf(
                         "SELECT
                             t.date,
@@ -54,14 +50,7 @@ class Queries extends Model
                         $merchantID
                     );
 
-        $query = DB::prepare($statement);
-        $query->execute();
-
-        if ($query->rowCount()) {
-            $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $result;
+        return $this->query($statement);
     }
 
     /**
@@ -77,8 +66,6 @@ class Queries extends Model
         string $batchRefNnum
     ): array
     {
-        $result = [];
-
         $statement = sprintf(
                         "SELECT
                             b.batch_date,
@@ -103,14 +90,7 @@ class Queries extends Model
                         $batchRefNnum
                     );
 
-        $query = DB::prepare($statement);
-        $query->execute();
-
-        if ($query->rowCount()) {
-            $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $result;
+        return $this->query($statement);
     }
 
     /**
@@ -128,8 +108,6 @@ class Queries extends Model
         string $dateEnd
     ): array
     {
-        $result = [];
-
         $statement = sprintf(
                         "SELECT
                             m.mid AS merchant_id,
@@ -155,14 +133,7 @@ class Queries extends Model
                         $dateEnd
                     );
 
-        $query = DB::prepare($statement);
-        $query->execute();
-
-        if ($query->rowCount()) {
-            $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $result;
+        return $this->query($statement);
     }
 
     /**
@@ -178,8 +149,6 @@ class Queries extends Model
         string $dateEnd
     ): array
     {
-        $result = [];
-
         $statement = sprintf(
                         "SELECT
                             m.mid AS merchant_id,
@@ -199,14 +168,7 @@ class Queries extends Model
                         $dateEnd
                     );
 
-        $query = DB::prepare($statement);
-        $query->execute();
-
-        if ($query->rowCount()) {
-            $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $result;
+        return $this->query($statement);
     }
 
 }

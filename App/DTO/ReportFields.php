@@ -66,12 +66,10 @@ class ReportFields
      */
     public function getBatchFields(): array
     {
-        $result = [
+        return [
             self::BATCH_DATE    => $this->{self::BATCH_DATE},
             self::BATCH_REF_NUM => $this->{self::BATCH_REF_NUM},
         ];
-
-        return $result;
     }
 
     /**
@@ -81,11 +79,9 @@ class ReportFields
      */
     public function getTransactionTypeFields(): array
     {
-        $result = [
+        return [
             self::TRANSACTION_TYPE => $this->{self::TRANSACTION_TYPE},
         ];
-
-        return $result;
     }
 
     /**
@@ -95,11 +91,9 @@ class ReportFields
      */
     public function getCardTypeFields(): array
     {
-        $result = [
+        return [
             self::TRANSACTION_CARD_TYPE => $this->{self::TRANSACTION_CARD_TYPE},
         ];
-
-        return $result;
     }
 
     /**
@@ -109,13 +103,11 @@ class ReportFields
      */
     public function getTransactionFields(): array
     {
-        $result = [
+        return [
             self::TRANSACTION_DATE        => $this->{self::TRANSACTION_DATE},
             self::TRANSACTION_CARD_NUMBER => $this->{self::TRANSACTION_CARD_NUMBER},
             self::TRANSACTOIN_AMOUNT      => $this->{self::TRANSACTOIN_AMOUNT},
         ];
-
-        return $result;
     }
 
     /**
@@ -125,7 +117,6 @@ class ReportFields
      */
     public function getBatchDate(): ?string
     {
-
         return property_exists($this, self::BATCH_DATE) ?
             $this->{self::BATCH_DATE} :
             null;
@@ -138,7 +129,6 @@ class ReportFields
      */
     public function getBatchNumber(): ?string
     {
-
         return property_exists($this, self::BATCH_REF_NUM) ?
             $this->{self::BATCH_REF_NUM} :
             null;
