@@ -46,6 +46,7 @@ class ImportService implements ImportServiceInterface
     {
         $this->fileService = $fileService;
 
+        // the better way it's to use DI to initiates models' instances
         $this->batch = new Batch();
         $this->cardType = new CardType();
         $this->merchant = new Merchant();

@@ -111,6 +111,8 @@ class FileService implements FileServiceInterface
     {
         $result = null;
 
+        // it gets one row from file and leave cursor on the next line
+        // so, we can use this method step by step (by iterations)
         if ($row = fgetcsv($this->file)) {
             $result = new ReportFields();
             foreach ($this->fieldsMapping as $column => $field) {
