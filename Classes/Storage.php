@@ -2,9 +2,10 @@
 
 namespace Classes;
 
+use Interfaces\Classes\StorageInterface;
 use \Exception;
 
-class Storage
+class Storage implements StorageInterface
 {
 
     const FILE_NAME = 'report.csv';

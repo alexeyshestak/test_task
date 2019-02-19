@@ -8,14 +8,15 @@ use App\Models\CardType;
 use App\Models\Merchant;
 use App\Models\Transaction;
 use App\Models\TransactionType;
-use App\Services\FileService;
 use Classes\DB;
+use Interfaces\Services\FileServiceInterface;
+use Interfaces\Services\ImportServiceInterface;
 use \Exception;
 
-class ImportService
+class ImportService implements ImportServiceInterface
 {
 
-    /** @var FileService $fileService */
+    /** @var FileServiceInterface $fileService */
     protected $fileService;
 
     /** @var Batch $batch */
@@ -36,34 +37,25 @@ class ImportService
     /**
      * Model constructor
      *
-     * @param FileService       $fileService        File url
-     * @param Batch             $batch              Batch model instance
-     * @param CardType          $cardType           CardType model instance
-     * @param Merchant          $merchant           Merchant model instance
-     * @param Transaction       $transaction        Transaction model instance
-     * @param TransactionType   $transactionType    TransactionType model instance
+     * @param FileServiceInterface  $fileService        File url
      */
-    public function __construct(
-        FileService $fileService,
-        Batch $batch,
-        CardType $cardType,
-        Merchant $merchant,
-        Transaction $transaction,
-        TransactionType $transactionType
-    ) {
+    public function __construct(FileServiceInterface $fileService)
+    {
         $this->fileService = $fileService;
 
-        $this->batch = $batch;
-        $this->cardType = $cardType;
-        $this->merchant = $merchant;
-        $this->transaction = $transaction;
-        $this->transactionType = $transactionType;
+        $this->batch = new Batch();
+        $this->cardType = new CardType();
+        $this->merchant = new Merchant();
+        $this->transaction = new Transaction();
+        $this->transactionType = new TransactionType();
     }
 
     /**
      * Imports rows to database
+     *
+     * @return void
      */
-    public function import()
+    public function import(): void
     {
         while ($rows = $this->getRows()) {
             $this->insertRows($rows);

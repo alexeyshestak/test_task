@@ -31,6 +31,8 @@
         INNER JOIN transaction_type AS tt ON tt.id = t.type_id
         INNER JOIN card_type AS ct ON ct.id = t.card_type_id
         INNER JOIN batch AS b ON b.bid = t.batch_id
+            AND b.batch_date = '2018-05-05'
+            AND b.batch_ref_num = '219022643874254207378'
     GROUP BY
         b.batch_date,
         b.batch_ref_num,
@@ -44,8 +46,8 @@
     /*display stats for a merchant and a given date range*/
 
     SELECT
-        m.mid,
-        m.dba,
+        m.mid AS merchant_id,
+        m.dba AS merchant_name,
         ct.code AS card_type,
         COUNT(t.amount) AS transactions,
         SUM(t.amount) AS amount
@@ -53,6 +55,7 @@
         INNER JOIN transaction_type AS tt ON tt.id = t.type_id
         INNER JOIN card_type AS ct ON ct.id = t.card_type_id
         INNER JOIN merchant AS m ON m.mid = t.merchant_id
+            AND m.mid = '2264135688721936'
     WHERE t.date BETWEEN '2018-05-04' AND '2018-05-05'
     GROUP BY
         m.mid,
@@ -68,8 +71,8 @@
     merchant id, merchant name, total amount, number of transactions*/
 
     SELECT
-        m.mid,
-        m.dba,
+        m.mid AS merchant_id,
+        m.dba AS merchant_name,
         COUNT(t.amount) AS transactions,
         SUM(t.amount) AS amount
     FROM transaction AS t

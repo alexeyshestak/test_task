@@ -1,25 +1,9 @@
 <?php
 
-foreach (glob('System/*.php') as $filename) {
-    include $filename;
-}
+$pathList = include('Configs/app.php');
 
-foreach (glob('Helpers/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob('Classes/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob('App/DTO/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob('App/Models/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob('App/Services/*.php') as $filename) {
-    include $filename;
+foreach ($pathList as $path) {
+    foreach (glob($path) as $filename) {
+        include $filename;
+    }
 }

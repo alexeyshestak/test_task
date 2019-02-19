@@ -4,9 +4,10 @@ namespace App\Services;
 
 use App\DTO\ReportFields;
 use Classes\Storage;
+use Interfaces\Services\FileServiceInterface;
 use \Exception;
 
-class FileService
+class FileService implements FileServiceInterface
 {
 
     /** @var mixed $file */
