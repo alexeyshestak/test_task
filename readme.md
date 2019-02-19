@@ -10,7 +10,11 @@
     * Configs\db.php
     * Configs\settings.php
 5. Configure virtual host
-6. Import functionality will be available on home-page (scheme://domain/)
+6. Paste
+    > report.csv
+file to the
+    > Resources\Files directory
+7. Import functionality will be available on home-page (scheme://domain/)
 
 ## Database
 
