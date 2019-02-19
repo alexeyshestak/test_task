@@ -84,6 +84,31 @@ class ImportService implements ImportServiceInterface
             do {
                 $row = $newRow;
 
+                // we can create structure for $data's item
+                // something like that:
+                // [
+                //      'batch' => [... batch info ...],
+                //      'merchants' => [
+                //          [...],
+                //          [
+                //              'merchant' => [... merchant info ...],
+                //              'transactions' => [... list of transactions ...],
+                //          ],
+                //          [...],
+                //      ],
+                // ]
+                // it helps to implement multi-insertion
+                // (insert into <table> (...) values (...), (...), ...;)
+                //
+                // BUT! import functionality will be not idempotent.
+                // if file will be imported twice, system creates transactions' records twice.
+                //
+                // current implementation avoids that behaviour:
+                // to create transaction record system uses `getOrCreate` method
+                //
+                // we can implement `getOrCreate` method for multi-insertion,
+                // but it will works line by line,
+                // so, there is no advantages for performance will be reached
                 $data[] = $row;
 
                 $isSameBatch = false;
