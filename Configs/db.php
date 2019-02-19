@@ -5,7 +5,6 @@ return [
 
     'dsn'           => [
         'host'   => 'mysql',
-        //'host'   => 'localhost',
         'port'   => '3306',
         'dbname' => 'test.loc',
     ],

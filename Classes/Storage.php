@@ -33,11 +33,11 @@ class Storage implements StorageInterface
 
             fclose($fileRead);
             fclose($fileWrite);
-        } else {
-            throw new Exception('Can\'t open file');
+
+            return fopen(self::STORAGE_PATH . self::FILE_NAME, 'r');
         }
 
-        return fopen(self::STORAGE_PATH . self::FILE_NAME, 'r');
+        throw new Exception('Can\'t open file');
     }
 
 }

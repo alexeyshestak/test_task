@@ -39,11 +39,11 @@ class FileService implements FileServiceInterface
     {
         $this->file = $this->getFile($url);
 
-        if ($this->validate($fields)) {
-            $this->fieldsMapping = $this->setColumnMapping($fields);
-        } else {
+        if (!$this->validate($fields)) {
             throw new Exception('File is not valid. Some fields are missing.');
         }
+
+        $this->fieldsMapping = $this->setColumnMapping($fields);
     }
 
     /**
@@ -55,7 +55,6 @@ class FileService implements FileServiceInterface
      */
     protected function getFile(string $url)
     {
-
         return Storage::getFile($url);
     }
 
