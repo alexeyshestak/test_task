@@ -22,10 +22,8 @@ class FileService implements FileServiceInterface
      * @param string    $url    File url
      * @param array     $fields     Array of required fields
      */
-    public function __construct(
-        string $url,
-        array $fields
-    ) {
+    public function __construct(string $url, array $fields)
+    {
         $this->processFile($url, $fields);
     }
 
@@ -37,10 +35,7 @@ class FileService implements FileServiceInterface
      *
      * @return void
      */
-    protected function processFile(
-        string $url,
-        array $fields
-    ): void
+    protected function processFile(string $url, array $fields): void
     {
         $this->file = $this->getFile($url);
 

@@ -34,6 +34,9 @@ class ImportService implements ImportServiceInterface
     /** @var TransactionType $transactionType */
     protected $transactionType;
 
+    /** @var ReportFields $bufferRow */
+    protected $bufferRow;
+
     /**
      * Model constructor
      *
@@ -48,6 +51,8 @@ class ImportService implements ImportServiceInterface
         $this->merchant = new Merchant();
         $this->transaction = new Transaction();
         $this->transactionType = new TransactionType();
+
+        $this->bufferRow = null;
     }
 
     /**
@@ -72,12 +77,12 @@ class ImportService implements ImportServiceInterface
         $data = [];
 
         /** @var ReportFields $newRow */
-        $newRow = $this->fileService
-            ->getRow();
+        $newRow = $this->bufferRow ?? $this->fileService->getRow();
 
         if ($newRow) {
             do {
                 $row = $newRow;
+
                 $data[] = $row;
 
                 $isSameBatch = false;
@@ -90,6 +95,8 @@ class ImportService implements ImportServiceInterface
                 }
 
             } while ($newRow && $isSameBatch);
+
+            $this->bufferRow = $newRow;
         }
 
         return $data;
@@ -128,10 +135,10 @@ class ImportService implements ImportServiceInterface
                     );
 
                 $transactionData = $row->getTransactionFields();
-                $transactionData[Transaction::MERCHANT_ID] = $merchant['mid'];
-                $transactionData[Transaction::BATCH_ID] = $batch['bid'];
+                $transactionData[Transaction::MERCHANT_ID]  = $merchant['mid'];
+                $transactionData[Transaction::BATCH_ID]     = $batch['bid'];
                 $transactionData[Transaction::CARD_TYPE_ID] = $cardType['id'];
-                $transactionData[Transaction::TYPE_ID] = $transactionType['id'];
+                $transactionData[Transaction::TYPE_ID]      = $transactionType['id'];
 
                 $transaction = $this->transaction
                     ->getOrCreate(
